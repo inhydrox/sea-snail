@@ -53,24 +53,13 @@ class CommandHandler {
                 });
                 this.modules.set(dir, moduleConf);
             }
-            console.log("Loaded!");
         });
 
         this.client.on("message", message => {
             const prefix = this.client.config.prefix;
 
             if (message.author.bot) return;
-            if (!message.content.startsWith(prefix)) return;
-            const queries = message.content.slice(prefix.length).trim().split(/ +/g);
-            const commandName = queries.shift().toLocaleLowerCase();
-            message.args = []
-            message.flags = [];
-            for (const query of queries) {
-                if (query.startsWith("--")) message.flags.push(query.slice(2).toLowerCase());
-                    else message.args.push(query);
-            }
-
-            const command = this.commands.get(commandName) || this.commands.find(c => c.aliases.includes(commandName));
+            const command = this.commands.get(message.command) || this.commands.find(c => c.aliases.includes(message.command));
             if (!command) return;
             if (command.guildOnly && message.channel.type === "dm") return;
             if (command.ownerOnly && !message.author.isDev) return;

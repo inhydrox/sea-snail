@@ -17,7 +17,7 @@ class PingCommand extends Command {
      * @param {import("../../structures/ExtMessage")} message
      */
     exec(client, message) {
-        message.channel.send(`Pong! \`${client.ws.ping.toFixed(0)}\`ms`);
+        message.channel.send(`Pong! \`${client.ws.ping.toFixed(0)}ms\``);
     }
 }
 

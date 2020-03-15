@@ -2,6 +2,7 @@ const { Client } = require("discord.js");
 const { resolve } = require("path");
 const CommandHandler = require("./CommandHandler");
 require("../structures/ExtGuildMember");
+require("../structures/ExtMessage");
 require("../structures/ExtUser");
 
 /**

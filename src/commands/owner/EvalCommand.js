@@ -24,7 +24,7 @@ class EvalCommand extends Command {
 
         const {
             args,
-            flags
+            flag
         } = message;
 
         const embed = new MessageEmbed();
@@ -34,10 +34,10 @@ class EvalCommand extends Command {
             if (!code) return;
             let evaled;
 
-            if (flags.includes("async")) evaled = await eval(`(async () => { ${code} })()`);
+            if (flag.includes("async")) evaled = await eval(`(async () => { ${code} })()`);
             else evaled = eval(code);
 
-            if (flags.includes("silent")) return;
+            if (flag.includes("silent")) return;
 
             if (typeof evaled !== "string") {
                 evaled = require("util").inspect(evaled, {
@@ -60,7 +60,7 @@ class EvalCommand extends Command {
                 .setColor("0x42f468");
 
             const isURL = this.validateURL(result);
-            if (flags.includes("no-embed")) {
+            if (flag.includes("no-embed")) {
                 message.channel.send(isURL ? result : `\`\`\`js\n${result}\n\`\`\``);
                 return;
             }
@@ -83,7 +83,7 @@ class EvalCommand extends Command {
 
             const isURL = this.validateURL(result);
 
-            if (flags.includes("no-embed")) {
+            if (flag.includes("no-embed")) {
                 message.channel.send(isURL ? result : `\`\`\`js\n${result}\n\`\`\``);
                 return;
             }
