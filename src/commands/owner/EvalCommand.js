@@ -9,6 +9,7 @@ class EvalCommand extends Command {
         super();
         this.name = "eval";
         this.aliases = ["e", "ev", "evaluate"];
+        this.ownerOnly = true;
         this.desc = "Evaluate to the Bot";
         this.usage = "eval <code>";
     }
