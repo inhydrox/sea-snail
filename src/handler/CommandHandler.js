@@ -56,8 +56,6 @@ class CommandHandler {
         });
 
         this.client.on("message", message => {
-            const prefix = this.client.config.prefix;
-
             if (message.author.bot) return;
             const command = this.commands.get(message.command) || this.commands.find(c => c.aliases.includes(message.command));
             if (!command) return;
