@@ -4,7 +4,7 @@ const { MessageEmbed } = require("discord.js");
 /**
  * @extends {Command}
  */
-class PingCommand extends Command {
+class EvalCommand extends Command {
     constructor() {
         super();
         this.name = "eval";
@@ -110,4 +110,4 @@ class PingCommand extends Command {
     }
 }
 
-module.exports = PingCommand;
+module.exports = EvalCommand;
