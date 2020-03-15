@@ -1,0 +1,34 @@
+{
+  "name": "zalveeyv3",
+  "version": "1.0.0",
+  "description": "Sea Snail a.k.a zalveeyv3",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Allvaa/sea-snail.git"
+  },
+  "keywords": [
+    "discord",
+    "discord.js",
+    "node",
+    "nodejs",
+    "discord-bot"
+  ],
+  "author": "Allvaa",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Allvaa/sea-snail/issues"
+  },
+  "homepage": "https://github.com/Allvaa/sea-snail#readme",
+  "devDependencies": {
+    "eslint": "^6.8.0"
+  },
+  "dependencies": {
+    "discord.js": "^12.0.2",
+    "dotenv": "^8.2.0",
+    "superagent": "^5.2.2"
+  }
+}
