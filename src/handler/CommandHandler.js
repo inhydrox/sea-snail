@@ -61,13 +61,14 @@ class CommandHandler {
 
             if (message.author.bot) return;
             if (!message.content.startsWith(prefix)) return;
-            message.args = message.content.slice(prefix.length).trim().split(/ +/g);
+            const queries = message.content.slice(prefix.length).trim().split(/ +/g);
+            message.args = []
             message.flags = [];
-            for (const query of message.args) {
-                if (query.startsWith("--"))
-                    message.flags.push(query.slice(2).toLowerCase());
+            for (const query of queries) {
+                if (query.startsWith("--")) message.flags.push(query.slice(2).toLowerCase());
+                    else message.args.push(query);
             }
-            const commandName = message.args.shift().toLocaleLowerCase();
+            const commandName = queries.shift().toLocaleLowerCase();
 
             const command = this.commands.get(commandName) || this.commands.find(c => c.aliases.includes(commandName));
             if (!command) return;

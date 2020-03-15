@@ -21,53 +21,77 @@ class EvalCommand extends Command {
         const runnedtimestamp = message.createdTimestamp;
         const msg = message;
         const bot = client;
-        const { args, flags } = message;
-        const code = args.join(" ");
 
-        if (!code) return;
-        let { success, result } = await this.evaluate(flags.includes("async") ? `(async () => { ${code} })()` : code);
-        if (flags.includes("silent")) return;
+        const {
+            args,
+            flags
+        } = message;
 
-        if (result.length > 2000) {
-            const { body: { key } } = await client.request.post("https://bin.zealcord.xyz/documents").send(output);
-            result = `https://bin.zealcord.xyz/${key}`;
-        }
+        const embed = new MessageEmbed();
 
-        const embed = new MessageEmbed()
-            .setAuthor(success ? "Output" : "Error")
-            .setColor(success ? "0x42f468" : "0xff0000");
-
-        const isURL = this.validateURL(result);
-        if (flags.includes("no-embed")) {
-            message.channel.send(isURL ? result : `\`\`\`js\n${result}\n\`\`\``);
-            return;
-        }
-        embed.setDescription(isURL ? result : `\`\`\`js\n${result}\n\`\`\``);
-        embed.setFooter(`⏱️ ${Date.now() - runnedtimestamp}ms`);
-        message.channel.send(embed);
-    }
-
-    async evaluate(code) {
-        let evaled = {};
         try {
-            let result;
-            if (flags.includes("async")) result = await eval(`(async () => { ${code} })()`);
-            else result = eval(code);
+            const code = args.join(" ");
+            if (!code) return;
+            let evaled;
 
-            result = result.replace(bot.token, "[TOKEN]");
-            if (typeof result !== "string") {
-                result = require("util").inspect(result, {
+            if (flags.includes("async")) evaled = await eval(`(async () => { ${code} })()`);
+            else evaled = eval(code);
+
+            if (flags.includes("silent")) return;
+
+            if (typeof evaled !== "string") {
+                evaled = require("util").inspect(evaled, {
                     depth: 0
                 });
+                evaled = evaled.replace(bot.token, "[TOKEN]");
             }
+            const output = this.clean(evaled);
+            let result;
+            if (output.length > 2000) {
+                const {
+                    body: {
+                        key
+                    }
+                } = await client.request.post("https://bin.zealcord.xyz/documents").send(output);
+                result = `https://bin.zealcord.xyz/${key}`;
+            } else result = output;
+            embed
+                .setAuthor("Output")
+                .setColor("0x42f468");
 
-            evaled.success = true;
-            evaled.result = this.clean(result);
+            const isURL = this.validateURL(result);
+            if (flags.includes("no-embed")) {
+                message.channel.send(isURL ? result : `\`\`\`js\n${result}\n\`\`\``);
+                return;
+            }
+            embed.setDescription(isURL ? result : `\`\`\`js\n${result}\n\`\`\``);
         } catch (e) {
-            evaled.success = false;
-            evaled.result = this.clean(e.message);
+            const error = this.clean(e);
+            let result;
+            if (error.length > 2000) {
+                const {
+                    body: {
+                        key
+                    }
+                } = await client.request.post("https://bin.zealcord.xyz/documents").send(error);
+                result = `https://bin.zealcord.xyz/${key}`;
+            } else result = error;
+
+            embed
+                .setAuthor("Error")
+                .setColor("0xff0000");
+
+            const isURL = this.validateURL(result);
+
+            if (flags.includes("no-embed")) {
+                message.channel.send(isURL ? result : `\`\`\`js\n${result}\n\`\`\``);
+                return;
+            }
+            embed.setDescription(isURL ? result : `\`\`\`js\n${result}\n\`\`\``);
         }
-        return evaled;
+
+        embed.setFooter(`⏱️ ${Date.now() - runnedtimestamp}ms`);
+        message.channel.send(embed);
     }
 
     clean(text) {
