@@ -7,10 +7,6 @@ class Event {
          * @type {String}
          */
         this.name = null;
-        /**
-         * @type {String}
-         */
-        this.path = null;
     }
 
     /**
