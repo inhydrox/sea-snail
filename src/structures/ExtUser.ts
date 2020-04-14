@@ -1,8 +1,9 @@
-const { Structures } = require("discord.js");
+import { Structures } from "discord.js";
 
 Structures.extend("User", User => {
     class ExtUser extends User {
-        constructor(client, data) {
+        isDev: Boolean;
+        constructor(client: any, data: any) {
             super(client, data);
             this.isDev = client.config.owners.includes(this.id);
         }

@@ -1,9 +1,11 @@
-const { Structures } = require("discord.js");
+import { Structures } from "discord.js";
 
 Structures.extend("GuildMember", GuildMember => {
     class ExtGuildMember extends GuildMember {
-        constructor(client, data, guild) {
+        isDev: Boolean;
+        constructor(client: any, data: any, guild: any) {
             super(client, data, guild);
+            // @ts-ignore
             this.isDev = this.user.isDev;
         }
     }

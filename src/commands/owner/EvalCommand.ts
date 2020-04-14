@@ -1,27 +1,19 @@
-const Command = require("../../structures/Command");
-const { MessageEmbed } = require("discord.js");
+import { Command, ExtMessage } from "@type/index";
+import SSnailClient from "../../handler/SSnailClient";
+import { MessageEmbed } from "discord.js";
 
-/**
- * @extends {Command}
- */
-class EvalCommand extends Command {
-    constructor() {
-        super();
-        this.name = "eval";
-        this.aliases = ["e", "ev", "evaluate"];
-        this.ownerOnly = true;
-        this.desc = "Evaluate to the Bot";
-        this.usage = "eval <code>";
-    }
+class EvalCommand implements Command {
+    name = "eval";
+    aliases = ["e", "ev", "evaluate"];
+    ownerOnly = true;
+    desc = "Evaluate to the Bot";
+    usage = "eval <code>";
 
-    /**
-     * @param {import("../../handler/SSnailClient")} client
-     * @param {import("../../structures/ExtMessage")} message
-     */
-    async exec(client, message) {
+    async exec(message: ExtMessage) {
         const runnedtimestamp = message.createdTimestamp;
         const msg = message;
-        const bot = client;
+        const bot = message.client;
+        const client = message.client;
 
         const {
             args,
@@ -35,8 +27,8 @@ class EvalCommand extends Command {
             if (!code) return;
             let evaled;
 
-            if (flag.includes("async")) evaled = await eval(`(async () => { ${code} })()`);
-            else evaled = eval(code);
+            if (flag.includes("async")) evaled = await eval(`(async () => { ${code} })()`); // eslint-disable-line
+            else evaled = eval(code); // eslint-disable-line
 
             if (flag.includes("silent")) return;
 
@@ -53,7 +45,7 @@ class EvalCommand extends Command {
                     body: {
                         key
                     }
-                } = await client.request.post("https://bin.zealcord.xyz/documents").send(output);
+                } = await message.client.request.post("https://bin.zealcord.xyz/documents").send(output);
                 result = `https://bin.zealcord.xyz/${key}`;
             } else result = output;
             embed
@@ -95,23 +87,23 @@ class EvalCommand extends Command {
         message.channel.send(embed);
     }
 
-    clean(text) {
-        if (typeof text === "string")
+    clean(text: String) {
+        if (typeof text === "string") {
             return text
                 .replace(/`/g, "`" + String.fromCharCode(8203))
                 .replace(/@/g, "@" + String.fromCharCode(8203));
-        else return text;
+        } else return text;
     }
 
-    validateURL(str) {
+    validateURL(str: String) {
         const pattern = new RegExp("^(https?:\\/\\/)?" + // protocol
             "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
             "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
             "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
             "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
             "(\\#[-a-z\\d_]*)?$", "i"); // fragment locator
-        return !!pattern.test(str);
+        return !!pattern.test(str as string);
     }
 }
 
-module.exports = EvalCommand;
+export default EvalCommand;

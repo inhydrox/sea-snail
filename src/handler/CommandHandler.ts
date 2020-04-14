@@ -1,50 +1,41 @@
-const { Collection } = require("discord.js");
-const { readdir } = require("fs");
-const { resolve } = require("path");
+import { Collection } from "discord.js";
+import { readdir, PathLike } from "fs";
+import { resolve } from "path";
+import SSnailClient from "./SSnailClient";
+import { Command, Module, ExtMessage } from "@type/index";
 
 /**
  * @class CommandHandler
  */
 class CommandHandler {
-    /**
-     * @param {import("./SSnailClient")} client
-     * @param {String} path
-     */
-    constructor(client, path) {
-        /**
-         * @type {import("./SSnailClient")}
-         */
+    client: SSnailClient;
+    path: String;
+    modules: Collection<String, Module> = new Collection();
+    commands: Collection<String, Command> = new Collection();
+    constructor(client: SSnailClient, path: String) {
         this.client = client;
-        /**
-         * @type {String}
-         */
         this.path = path;
-        /**
-         * @type {import("discord.js").Collection<String, import("../structures/Module")>}
-         */
-        this.modules = new Collection();
-        /**
-         * @type {import("discord.js").Collection<String, import("../structures/Command")>}
-         */
-        this.commands = new Collection();
     }
 
     build() {
-        readdir(this.path, (err, dirs) => {
+        readdir(this.path as PathLike, (err, dirs) => {
+            // @ts-ignore
             if (err) throw Error(err);
             console.log(`Loading commands from ${dirs.length} categories...`);
             for (const dir of dirs) {
-                const moduleDir = resolve(this.path, dir);
-                const moduleConf = new (require("../structures/Module"))({
+                const moduleDir = resolve(this.path as string, dir);
+                const moduleConf: Module = {
                     name: dir,
                     path: moduleDir,
                     commands: []
-                });
+                };
                 readdir(moduleDir, (err, files) => {
+                    // @ts-ignore
                     if (err) throw Error(err);
                     for (const file of files) {
                         const commandPath = resolve(moduleDir, file);
-                        const command = new(require(commandPath));
+                        // eslint-disable-next-line new-cap
+                        const command: Command = new (require(commandPath)).default();
                         command.path = commandPath;
                         command.module = moduleConf;
                         moduleConf.commands.push(command);
@@ -55,15 +46,18 @@ class CommandHandler {
             }
         });
 
-        this.client.on("message", message => {
+        // @ts-ignore
+        this.client.on("message", (message: ExtMessage) => {
             if (message.author.bot) return;
-            const command = this.commands.get(message.command) || this.commands.find(c => c.aliases.includes(message.command));
+            // @ts-ignore
+            const command: Command = this.commands.get(message.command) || this.commands.find(c => c.aliases.includes(message.command));
             if (!command) return;
             if (command.guildOnly && message.channel.type === "dm") return;
+            // @ts-ignore
             if (command.ownerOnly && !message.author.isDev) return;
 
             try {
-                command.exec(this.client, message);
+                command.exec(message);
             } catch (e) {
                 console.error(e.stack);
             }
@@ -71,4 +65,4 @@ class CommandHandler {
     }
 }
 
-module.exports = CommandHandler;
+export default CommandHandler;

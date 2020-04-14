@@ -4,7 +4,9 @@
   "description": "Sea Snail a.k.a zalveeyv3",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "npm run compile && node dist/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "compile": "tsc"
   },
   "repository": {
     "type": "git",
@@ -24,10 +26,21 @@
   },
   "homepage": "https://github.com/Allvaa/sea-snail#readme",
   "devDependencies": {
-    "eslint": "^6.8.0"
+    "@types/node": "^13.11.1",
+    "@types/superagent": "^4.1.7",
+    "@types/ws": "^7.2.4",
+    "@typescript-eslint/eslint-plugin": "^2.28.0",
+    "@typescript-eslint/parser": "^2.28.0",
+    "eslint": "^6.8.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "typescript": "^3.8.3"
   },
   "dependencies": {
-    "discord.js": "^12.0.2",
+    "discord.js": "^12.1.1",
     "dotenv": "^8.2.0",
     "superagent": "^5.2.2"
   }
